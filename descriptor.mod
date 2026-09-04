@@ -2,5 +2,5 @@
 tags={
 	"Utilities"
 }
-name="ATE Scoreboard"
+name="After the End: Game over Scoreboard"
 supported_version="1.19.*"

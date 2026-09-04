@@ -1,4 +1,4 @@
-# ATE Scoreboard
+# After the End: Game over Scoreboard
 
 A standalone addon for **[After the End](https://steamcommunity.com/sharedfiles/filedetails/?id=3192256710)** (Crusader Kings III) that brings back CK2's end-game legacy scoreboard.
 
