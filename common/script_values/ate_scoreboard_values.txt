@@ -1,0 +1,54 @@
+﻿# Score shown on the ATE Scoreboard overlay (window_succession_event.gui).
+# Root is the dead character - the GUI calls this through
+#   SuccessionEventWindow.GetDeadCharacter.MakeScope.ScriptValue('ate_scoreboard_score')
+#
+# This is a script VALUE, not an event, so it is pure computation and still
+# evaluates correctly at game over when the player character is dead.
+#
+# Why not just use renown: dynasty_prestige is the *current unspent* balance,
+# which drops every time you buy a legacy perk. Ranking on it alone punishes
+# exactly the players who spent their renown well. Adding the perks back in
+# turns the number into lifetime achievement instead of leftover currency.
+#
+# RECONSTRUCTING SPENT RENOWN EXACTLY
+#
+# CK3 prices the next legacy perk from two defines (00_defines.txt:1031-1032):
+#     COST = PERK_COST_BASE + (unlocked perks * PERK_COST_MULTIPLIER)
+#          = 250 + 500n
+# Summing that series over N purchased perks:
+#     total = SUM(250 + 500i) for i = 0..N-1
+#           = 250N + 500 * N(N-1)/2
+#           = 250N^2
+# So a dynasty's lifetime renown is exactly:  current renown + 250 * perks^2.
+# This is derived from the game's own cost curve, not estimated.
+#
+# Scale sanity check against the CK2 ladder thresholds:
+#      2 perks ->      1 000   (House Avondale, bottom rung)
+#      5 perks ->      6 250   (House Tagotoka)
+#     10 perks ->     25 000   (House Nokona)
+#     15 perks ->     56 250   (House Abbas / Sully)
+#     20 perks ->    100 000   (House Talanque, top rung)
+# 20 perks for the summit is demanding but reachable in a long successful game,
+# which is why the original CK2 thresholds carry over unchanged.
+
+ate_scoreboard_perk_cost_base = {
+	value = 250
+}
+
+ate_scoreboard_score = {
+	value = 0
+
+	if = {
+		limit = { exists = dynasty }
+
+		# Renown still in the bank
+		add = dynasty.dynasty_prestige
+
+		# Renown already converted into legacy perks: 250 * perks^2
+		add = {
+			value = dynasty.dynasty_num_unlocked_perks
+			multiply = dynasty.dynasty_num_unlocked_perks
+			multiply = ate_scoreboard_perk_cost_base
+		}
+	}
+}

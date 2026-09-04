@@ -1,0 +1,4 @@
+# CK3 mod files are encoding-sensitive: they require a UTF-8 BOM and real tab
+# characters. Disable all line-ending conversion so every file round-trips
+# byte-identical through clone and checkout.
+* -text
